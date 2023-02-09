@@ -8,8 +8,6 @@ import sys
 fichier_in = sys.argv[1] + '.log'
 fichier_out = sys.argv[1] + '.csv'
 
-coeff_debit = float(sys.argv[2])
-	
 #Ouverture d'un fichier log jPerf serveur de flux UDP en read-only et lecture ligne à ligne
 fichier = open(fichier_in, "r")
 text = fichier.readlines()
@@ -27,6 +25,7 @@ for line in text[1:len(text)-1]:
 		#Si la ligne ne contient pas les données exploitables, je passe à l'itération suivante
 		continue
 	else:
+		#Push des valeurs dans les différentes listes
 		data.append(line[:len(line)-1].split(" "))
 		lost.append(float(line[line.find('(')+1:line.find('%')]))
 		jitter.append(float(line[line.find('/sec')+5:line.find('ms')])/(2*coeff_debit))
@@ -34,7 +33,7 @@ for line in text[1:len(text)-1]:
 		debit.append(float(line[line.find(' sec')+5:line.find('KBytes')])*coeff_debit)
 		T.append(float(line[line.find(']')+2:line.find('-')]))
 
-		
+#MAJ du dictionnaire de data report	
 dataReport['Max Jitter'] = max(jitter)
 dataReport['Min Bandwidth'] = min(bw)
 dataReport['Bandwidth moyenne'] = mean(bw)
@@ -45,6 +44,7 @@ dataReport['Ecart type bandwidth'] = pstdev(bw)
 #J'envoie le dictionnaire report dans un fichier CSV dont le titre est passé dans la console
 data2csv(dataReport, fichier_out)
 
+#Affichage des courbes
 plotDataJit(jitter[1:len(jitter)-1], T[1:len(T)-1], 'Jitter (ms)', (0,10))
 plotDataBW(bw[1:len(bw)-1], T[1:len(T)-1], 'Bande Passante d\'un flux UDP(Kbits/sec)', (0, 10000))
 

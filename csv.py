@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 csv.py - read/write/investigate CSV files
 """
